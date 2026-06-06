@@ -18,7 +18,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .tv-room {
@@ -28,7 +28,6 @@
             padding: 20px;
         }
 
-        /* === 电视机外壳 === */
         .tv-cabinet {
             background: linear-gradient(145deg, #8B4513, #654321, #3d2b1f);
             border-radius: 20px;
@@ -63,7 +62,6 @@
             text-transform: uppercase;
         }
 
-        /* === 屏幕区域 === */
         .screen-bezel {
             background: #111;
             border-radius: 12px;
@@ -87,7 +85,6 @@
             display: block;
         }
 
-        /* CRT 扫描线效果 */
         .crt-overlay {
             position: absolute;
             top: 0;
@@ -121,7 +118,6 @@
             border-radius: 8px;
         }
 
-        /* === 雪花/静电效果 === */
         .static-overlay {
             position: absolute;
             top: 0;
@@ -143,7 +139,6 @@
             height: 100%;
         }
 
-        /* === 频道标识 === */
         .channel-badge {
             position: absolute;
             top: 20px;
@@ -164,7 +159,6 @@
             opacity: 1;
         }
 
-        /* === 节目信息条 === */
         .program-info {
             position: absolute;
             bottom: 0;
@@ -194,7 +188,6 @@
             margin-top: 3px;
         }
 
-        /* === 广告占位标识 === */
         .ad-placeholder-badge {
             position: absolute;
             top: 20px;
@@ -214,41 +207,11 @@
             opacity: 1;
         }
 
-        /* === 控制旋钮区 === */
-        .tv-controls {
-            position: absolute;
-            right: -60px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .knob {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #888, #333);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .knob:hover {
-            transform: scale(1.1);
-        }
-
-        .knob:active {
-            transform: scale(0.95);
-        }
-
-        /* === 频道列表面板 === */
         .channel-panel {
             background: linear-gradient(145deg, #2d2d44, #1e1e32);
             border-radius: 12px;
             padding: 20px;
-            min-width: 260px;
+            min-width: 280px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
@@ -300,6 +263,7 @@
             border-radius: 4px;
             font-size: 14px;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
         .channel-name {
@@ -312,7 +276,6 @@
             margin-top: 2px;
         }
 
-        /* === 时间显示 === */
         .time-display {
             text-align: center;
             color: #0f0;
@@ -331,7 +294,92 @@
             margin-top: 4px;
         }
 
-        /* === 提示信息 === */
+        .time-display .sim-label {
+            font-size: 10px;
+            color: #f80;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .time-display .sim-label.active {
+            display: block;
+        }
+
+        /* 时间模拟面板 */
+        .sim-panel {
+            margin-top: 15px;
+            border-top: 1px solid #444;
+            padding-top: 12px;
+        }
+
+        .sim-panel-title {
+            color: #888;
+            font-size: 11px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .sim-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .sim-row label {
+            color: #999;
+            font-size: 11px;
+            width: 36px;
+            flex-shrink: 0;
+        }
+
+        .sim-row select, .sim-row input {
+            background: #222;
+            color: #ccc;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+        }
+
+        .sim-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .sim-btn {
+            flex: 1;
+            background: #333;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .sim-btn:hover {
+            background: #444;
+            color: #fff;
+        }
+
+        .sim-btn.active {
+            background: #553300;
+            color: #ffd700;
+            border-color: #ffd700;
+        }
+
+        .sim-btn.reset {
+            background: #1a3320;
+            color: #0f0;
+            border-color: #0f0;
+        }
+
         .instructions {
             color: #666;
             font-size: 11px;
@@ -340,7 +388,6 @@
             line-height: 1.6;
         }
 
-        /* === CRT 开机/关机动画 === */
         @keyframes tvTurnOn {
             0% {
                 transform: scaleY(0.01) scaleX(0.5);
@@ -360,7 +407,6 @@
             animation: tvTurnOn 0.5s ease-out;
         }
 
-        /* === 频道切换闪烁 === */
         @keyframes channelFlicker {
             0%, 100% { opacity: 1; }
             25% { opacity: 0.3; }
@@ -372,7 +418,6 @@
             animation: channelFlicker 0.3s ease-in-out;
         }
 
-        /* === 响应式 === */
         @media (max-width: 1024px) {
             .tv-room {
                 flex-direction: column;
@@ -387,29 +432,18 @@
 </head>
 <body>
     <div class="tv-room">
-        <!-- 电视机 -->
         <div class="tv-cabinet">
             <div class="screen-bezel">
                 <div class="screen-container" id="screen">
-                    <video id="video-player" muted></video>
-
-                    <!-- CRT 效果层 -->
+                    <video id="video-player" muted playsinline></video>
                     <div class="crt-overlay scanlines"></div>
                     <div class="crt-overlay vignette"></div>
                     <div class="crt-overlay screen-curve"></div>
-
-                    <!-- 雪花静电 -->
                     <div class="static-overlay" id="static-overlay">
                         <canvas id="static-canvas"></canvas>
                     </div>
-
-                    <!-- 频道标识 -->
                     <div class="channel-badge" id="channel-badge">CH 01</div>
-
-                    <!-- 广告占位标识 -->
                     <div class="ad-placeholder-badge" id="ad-badge">广告</div>
-
-                    <!-- 节目信息 -->
                     <div class="program-info" id="program-info">
                         <div class="program-title" id="program-title">--</div>
                         <div class="program-time" id="program-time">--:-- ~ --:--</div>
@@ -419,14 +453,40 @@
             <div class="tv-brand">RETRO-VISION</div>
         </div>
 
-        <!-- 频道面板 -->
         <div class="channel-panel">
             <div class="panel-title">频 道 列 表</div>
             <ul class="channel-list" id="channel-list"></ul>
             <div class="time-display">
                 <div id="clock">00:00:00</div>
                 <div class="date" id="date-display">----年--月--日 星期-</div>
+                <div class="sim-label" id="sim-label">[ 模拟时间 ]</div>
             </div>
+
+            <!-- 时间模拟面板 -->
+            <div class="sim-panel">
+                <div class="sim-panel-title">— 演示时间控制 —</div>
+                <div class="sim-row">
+                    <label>星期</label>
+                    <select id="sim-day">
+                        <option value="1">周一</option>
+                        <option value="2">周二</option>
+                        <option value="3">周三</option>
+                        <option value="4">周四</option>
+                        <option value="5">周五</option>
+                        <option value="6">周六</option>
+                        <option value="0">周日</option>
+                    </select>
+                </div>
+                <div class="sim-row">
+                    <label>时间</label>
+                    <input type="time" id="sim-time" value="08:00">
+                </div>
+                <div class="sim-buttons">
+                    <button class="sim-btn" id="sim-apply">跳转模拟</button>
+                    <button class="sim-btn reset" id="sim-reset">恢复实时</button>
+                </div>
+            </div>
+
             <div class="instructions">
                 ↑↓ 或点击切换频道<br>
                 数字键 1-4 快速切换<br>
@@ -437,39 +497,62 @@
 
     <script>
     // ============================================================
-    // 复古电视模拟器 - 主逻辑
+    // 真实视频源映射（公共CC授权短视频，播完自动循环直到时段结束）
     // ============================================================
-
-    // 示例视频源（使用公共测试视频）
     const VIDEO_SOURCES = {
-        // 使用本地生成的彩色测试画面作为占位
-        // 实际部署时替换为真实视频URL
-        'news_morning': 'videos/news_morning.mp4',
-        'news_noon': 'videos/news_noon.mp4',
-        'news_evening': 'videos/news_evening.mp4',
-        'drama_ep1': 'videos/drama_ep1.mp4',
-        'drama_ep2': 'videos/drama_ep2.mp4',
-        'drama_ep3': 'videos/drama_ep3.mp4',
-        'movie_action': 'videos/movie_action.mp4',
-        'movie_comedy': 'videos/movie_comedy.mp4',
-        'movie_scifi': 'videos/movie_scifi.mp4',
-        'cartoon_morning': 'videos/cartoon_morning.mp4',
-        'cartoon_afternoon': 'videos/cartoon_afternoon.mp4',
-        'cartoon_evening': 'videos/cartoon_evening.mp4',
-        'sports_live': 'videos/sports_live.mp4',
-        'sports_replay': 'videos/sports_replay.mp4',
-        'documentary': 'videos/documentary.mp4',
-        'variety_show': 'videos/variety_show.mp4',
-        'ad_slot_1': 'videos/ad_slot_1.mp4',
-        'ad_slot_2': 'videos/ad_slot_2.mp4',
-        'ad_slot_3': 'videos/ad_slot_3.mp4',
+        'news_morning':      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+        'news_noon':         'https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4',
+        'news_evening':      'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4',
+        'drama_ep1':         'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        'drama_ep2':         'https://www.w3schools.com/html/mov_bbb.mp4',
+        'drama_ep3':         'https://www.w3schools.com/html/movie.mp4',
+        'movie_action':      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4',
+        'movie_comedy':      'https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_2MB.mp4',
+        'movie_scifi':       'https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_2MB.mp4',
+        'cartoon_morning':   'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        'cartoon_afternoon': 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+        'cartoon_evening':   'https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4',
+        'documentary':       'https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_2MB.mp4',
+        'variety_show':      'https://www.w3schools.com/html/mov_bbb.mp4',
+        'ad_slot_1':         'https://www.w3schools.com/html/movie.mp4',
+        'ad_slot_2':         'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+        'ad_slot_3':         'https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4',
     };
 
     // ============================================================
-    // 频道定义与节目时间表
-    // 每个节目: { id, title, start: "HH:MM", end: "HH:MM", isAd: bool }
-    // days: 0=周日, 1=周一, ... 6=周六
+    // 时间系统：支持真实时间和模拟时间
     // ============================================================
+    let simulatedTime = null; // null = 使用系统时间
+
+    function getNow() {
+        if (simulatedTime) {
+            return simulatedTime;
+        }
+        return new Date();
+    }
+
+    function setSimulatedTime(day, hours, minutes) {
+        const d = new Date();
+        const diff = day - d.getDay();
+        d.setDate(d.getDate() + diff);
+        d.setHours(hours, minutes, 0, 0);
+        simulatedTime = d;
+    }
+
+    function clearSimulatedTime() {
+        simulatedTime = null;
+    }
+
+    // ============================================================
+    // 频道与节目表
+    // ============================================================
+    function buildSchedule(config) {
+        const schedule = {};
+        for (let day = 0; day < 7; day++) {
+            schedule[day] = (day === 0 || day === 6) ? config.weekend : config.weekday;
+        }
+        return schedule;
+    }
 
     const CHANNELS = [
         {
@@ -627,23 +710,11 @@
         }
     ];
 
-    // 构建一周时间表（weekday应用于周一至周五，weekend应用于周六周日）
-    function buildSchedule(config) {
-        const schedule = {};
-        for (let day = 0; day < 7; day++) {
-            if (day === 0 || day === 6) {
-                schedule[day] = config.weekend;
-            } else {
-                schedule[day] = config.weekday;
-            }
-        }
-        return schedule;
-    }
-
     // ============================================================
     // 播放器状态
     // ============================================================
     let currentChannelIndex = 0;
+    let currentProgramKey = null; // "channelIdx:progIndex" 用于检测节目变更
     let isSwitching = false;
     let badgeTimeout = null;
     let infoTimeout = null;
@@ -661,18 +732,18 @@
     const channelListEl = document.getElementById('channel-list');
     const clockEl = document.getElementById('clock');
     const dateEl = document.getElementById('date-display');
+    const simLabel = document.getElementById('sim-label');
 
     // ============================================================
     // 工具函数
     // ============================================================
-
     function timeToMinutes(timeStr) {
         const [h, m] = timeStr.split(':').map(Number);
         return h * 60 + m;
     }
 
     function getCurrentProgram(channel) {
-        const now = new Date();
+        const now = getNow();
         const day = now.getDay();
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
         const daySchedule = channel.schedule[day];
@@ -681,57 +752,32 @@
             const prog = daySchedule[i];
             const startMin = timeToMinutes(prog.start);
             let endMin = timeToMinutes(prog.end);
-            if (endMin === 0) endMin = 1440; // 00:00 means end of day
+            if (endMin === 0) endMin = 1440;
 
             if (startMin <= endMin) {
                 if (currentMinutes >= startMin && currentMinutes < endMin) {
-                    return { ...prog, index: i };
+                    return { ...prog, index: i, daySchedule };
                 }
             } else {
-                // 跨午夜
                 if (currentMinutes >= startMin || currentMinutes < endMin) {
-                    return { ...prog, index: i };
+                    return { ...prog, index: i, daySchedule };
                 }
             }
         }
-        // 默认返回第一个
-        return { ...daySchedule[0], index: 0 };
+        return { ...daySchedule[0], index: 0, daySchedule };
     }
 
-    function getNextProgram(channel) {
-        const now = new Date();
+    function getNextProgramInSchedule(channel, currentIndex) {
+        const now = getNow();
         const day = now.getDay();
         const daySchedule = channel.schedule[day];
-        const current = getCurrentProgram(channel);
-        const nextIndex = (current.index + 1) % daySchedule.length;
-        return daySchedule[nextIndex];
-    }
-
-    function getProgramProgress(program) {
-        const now = new Date();
-        const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-        const startMin = timeToMinutes(program.start);
-        let endMin = timeToMinutes(program.end);
-        if (endMin === 0) endMin = 1440;
-
-        const duration = endMin - startMin;
-        const elapsed = currentMinutes - startMin;
-        return Math.max(0, Math.min(1, elapsed / duration));
-    }
-
-    function getSecondsUntilProgramEnd(program) {
-        const now = new Date();
-        const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-        let endMin = timeToMinutes(program.end);
-        if (endMin === 0) endMin = 1440;
-        const endSeconds = endMin * 60;
-        return Math.max(0, endSeconds - currentSeconds);
+        const nextIndex = (currentIndex + 1) % daySchedule.length;
+        return { ...daySchedule[nextIndex], index: nextIndex, daySchedule };
     }
 
     // ============================================================
     // 雪花效果
     // ============================================================
-
     function resizeStaticCanvas() {
         staticCanvas.width = staticCanvas.offsetWidth || 640;
         staticCanvas.height = staticCanvas.offsetHeight || 480;
@@ -742,7 +788,6 @@
         const h = staticCanvas.height;
         const imageData = staticCtx.createImageData(w, h);
         const data = imageData.data;
-
         for (let i = 0; i < data.length; i += 4) {
             const val = Math.random() * 255;
             data[i] = val;
@@ -750,7 +795,6 @@
             data[i + 2] = val;
             data[i + 3] = 255;
         }
-
         staticCtx.putImageData(imageData, 0, 0);
         staticAnimFrame = requestAnimationFrame(drawStatic);
     }
@@ -770,173 +814,25 @@
     }
 
     // ============================================================
-    // 模拟视频播放（使用Canvas生成测试画面）
+    // 真实视频播放
     // ============================================================
-
-    let simulatedVideoCanvas = null;
-    let simulatedVideoCtx = null;
-    let simulatedAnimFrame = null;
-
-    function createSimulatedVideo(program, channel) {
-        if (!simulatedVideoCanvas) {
-            simulatedVideoCanvas = document.createElement('canvas');
-            simulatedVideoCanvas.width = 640;
-            simulatedVideoCanvas.height = 480;
-            simulatedVideoCtx = simulatedVideoCanvas.getContext('2d');
-        }
-
-        // 停止之前的动画
-        if (simulatedAnimFrame) {
-            cancelAnimationFrame(simulatedAnimFrame);
-        }
-
-        const colors = {
-            'news_morning': '#1a237e',
-            'news_noon': '#0d47a1',
-            'news_evening': '#1b5e20',
-            'drama_ep1': '#4a148c',
-            'drama_ep2': '#880e4f',
-            'drama_ep3': '#311b92',
-            'movie_action': '#b71c1c',
-            'movie_comedy': '#f57f17',
-            'movie_scifi': '#006064',
-            'cartoon_morning': '#ff6f00',
-            'cartoon_afternoon': '#2e7d32',
-            'cartoon_evening': '#6a1b9a',
-            'sports_live': '#1b5e20',
-            'sports_replay': '#33691e',
-            'documentary': '#3e2723',
-            'variety_show': '#e65100',
-            'ad_slot_1': '#37474f',
-            'ad_slot_2': '#455a64',
-            'ad_slot_3': '#546e7a',
-        };
-
-        const bgColor = colors[program.id] || '#333';
-
-        function renderFrame() {
-            const ctx = simulatedVideoCtx;
-            const w = 640, h = 480;
-            const time = Date.now() / 1000;
-
-            // 背景
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, w, h);
-
-            // 动态效果 - 波纹
-            ctx.save();
-            ctx.globalAlpha = 0.1;
-            for (let i = 0; i < 5; i++) {
-                ctx.beginPath();
-                ctx.arc(
-                    w/2 + Math.sin(time + i) * 100,
-                    h/2 + Math.cos(time * 0.7 + i) * 80,
-                    50 + i * 30 + Math.sin(time * 2) * 10,
-                    0, Math.PI * 2
-                );
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-            ctx.restore();
-
-            // 频道名
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 24px Courier New';
-            ctx.textAlign = 'center';
-            ctx.fillText(channel.name, w/2, 60);
-
-            // 节目名
-            ctx.font = 'bold 36px Courier New';
-            ctx.fillStyle = '#ffd700';
-            ctx.fillText(program.title, w/2, h/2 - 20);
-
-            // 当前时间
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
-            ctx.font = '20px Courier New';
-            ctx.fillStyle = '#0f0';
-            ctx.fillText(timeStr, w/2, h/2 + 30);
-
-            // 节目时间
-            ctx.font = '16px Courier New';
-            ctx.fillStyle = '#aaa';
-            ctx.fillText(`${program.start} - ${program.end}`, w/2, h/2 + 60);
-
-            // 进度条
-            const progress = getProgramProgress(program);
-            const barWidth = 400;
-            const barX = (w - barWidth) / 2;
-            const barY = h - 60;
-            ctx.fillStyle = '#333';
-            ctx.fillRect(barX, barY, barWidth, 8);
-            ctx.fillStyle = '#ffd700';
-            ctx.fillRect(barX, barY, barWidth * progress, 8);
-
-            // 广告标识
-            if (program.isAd) {
-                ctx.fillStyle = 'rgba(255, 165, 0, 0.3)';
-                ctx.fillRect(0, 0, w, h);
-                ctx.font = 'bold 48px Courier New';
-                ctx.fillStyle = '#fff';
-                ctx.fillText('[ 广告 ]', w/2, h/2 + 100);
-            }
-
-            // 推流到视频元素
-            const stream = simulatedVideoCanvas.captureStream(30);
-            if (videoEl.srcObject !== stream) {
-                videoEl.srcObject = stream;
-                videoEl.play().catch(() => {});
-            }
-
-            simulatedAnimFrame = requestAnimationFrame(renderFrame);
-        }
-
-        renderFrame();
-    }
-
-    // ============================================================
-    // 频道切换
-    // ============================================================
-
-    function switchChannel(newIndex, immediate = false) {
-        if (isSwitching || newIndex === currentChannelIndex) return;
-        if (newIndex < 0 || newIndex >= CHANNELS.length) return;
-
-        isSwitching = true;
-        const channel = CHANNELS[newIndex];
-        const program = getCurrentProgram(channel);
-
-        if (immediate) {
-            currentChannelIndex = newIndex;
-            playProgram(channel, program);
-            updateUI();
-            isSwitching = false;
+    function playVideoForProgram(program) {
+        const url = VIDEO_SOURCES[program.id];
+        if (!url) {
+            console.warn('No video URL for program:', program.id);
             return;
         }
 
-        // 模拟延迟 + 雪花效果
-        showStatic();
-        const screen = document.getElementById('screen');
-        screen.classList.add('flickering');
+        // 清除之前的 srcObject（如果有canvas流残留）
+        if (videoEl.srcObject) {
+            videoEl.srcObject = null;
+        }
 
-        // 随机延迟 300-800ms
-        const delay = 300 + Math.random() * 500;
-
-        setTimeout(() => {
-            currentChannelIndex = newIndex;
-            playProgram(channel, program);
-            hideStatic();
-            screen.classList.remove('flickering');
-            updateUI();
-            showChannelBadge(channel);
-            showProgramInfo(program);
-            isSwitching = false;
-        }, delay);
-    }
-
-    function playProgram(channel, program) {
-        createSimulatedVideo(program, channel);
+        videoEl.src = url;
+        videoEl.load();
+        videoEl.play().catch(e => {
+            console.log('Autoplay blocked, user interaction needed:', e.message);
+        });
 
         // 更新广告标识
         if (program.isAd) {
@@ -947,9 +843,77 @@
     }
 
     // ============================================================
-    // UI 更新
+    // 视频结束事件：自动进入下一节目
     // ============================================================
+    videoEl.addEventListener('ended', () => {
+        const channel = CHANNELS[currentChannelIndex];
+        const currentProg = getCurrentProgram(channel);
 
+        // 检查当前时间段是否还在同一节目（视频比时间段短，需要循环）
+        const progKey = `${currentChannelIndex}:${currentProg.index}`;
+        if (progKey === currentProgramKey) {
+            // 还在同一时间段内，视频比节目时间短 → 循环播放
+            videoEl.currentTime = 0;
+            videoEl.play().catch(() => {});
+        } else {
+            // 时间已经进入下一个节目段 → 切换到下一节目
+            advanceToProgram(currentProg);
+        }
+    });
+
+    function advanceToProgram(program) {
+        currentProgramKey = `${currentChannelIndex}:${program.index}`;
+        playVideoForProgram(program);
+        showProgramInfo(program);
+    }
+
+    // ============================================================
+    // 频道切换
+    // ============================================================
+    function switchChannel(newIndex, immediate = false) {
+        if (isSwitching) return;
+        if (newIndex < 0 || newIndex >= CHANNELS.length) return;
+        if (newIndex === currentChannelIndex && !immediate) return;
+
+        isSwitching = true;
+        const channel = CHANNELS[newIndex];
+        const program = getCurrentProgram(channel);
+
+        if (immediate) {
+            currentChannelIndex = newIndex;
+            currentProgramKey = `${newIndex}:${program.index}`;
+            playVideoForProgram(program);
+            updateUI();
+            isSwitching = false;
+            return;
+        }
+
+        // 暂停当前视频
+        videoEl.pause();
+
+        // 雪花 + 闪烁过渡
+        showStatic();
+        const screen = document.getElementById('screen');
+        screen.classList.add('flickering');
+
+        const delay = 300 + Math.random() * 500;
+
+        setTimeout(() => {
+            currentChannelIndex = newIndex;
+            currentProgramKey = `${newIndex}:${program.index}`;
+            playVideoForProgram(program);
+            hideStatic();
+            screen.classList.remove('flickering');
+            updateUI();
+            showChannelBadge(channel);
+            showProgramInfo(program);
+            isSwitching = false;
+        }, delay);
+    }
+
+    // ============================================================
+    // UI
+    // ============================================================
     function showChannelBadge(channel) {
         channelBadge.textContent = `CH ${String(channel.id).padStart(2, '0')}`;
         channelBadge.classList.add('visible');
@@ -970,7 +934,6 @@
     }
 
     function updateUI() {
-        // 更新频道列表
         const items = channelListEl.querySelectorAll('.channel-item');
         items.forEach((item, idx) => {
             item.classList.toggle('active', idx === currentChannelIndex);
@@ -981,44 +944,89 @@
     }
 
     function updateClock() {
-        const now = new Date();
+        const now = getNow();
         const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
         clockEl.textContent = timeStr;
 
         const days = ['日', '一', '二', '三', '四', '五', '六'];
         const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${days[now.getDay()]}`;
         dateEl.textContent = dateStr;
+
+        simLabel.classList.toggle('active', simulatedTime !== null);
     }
 
     // ============================================================
-    // 自动续播逻辑
+    // 节目轮询：检测时间表驱动的切换
     // ============================================================
-
-    let lastProgramIndex = -1;
-
-    function checkProgramChange() {
+    function checkScheduledProgramChange() {
         const channel = CHANNELS[currentChannelIndex];
         const program = getCurrentProgram(channel);
+        const progKey = `${currentChannelIndex}:${program.index}`;
 
-        if (program.index !== lastProgramIndex) {
-            lastProgramIndex = program.index;
-            playProgram(channel, program);
+        if (progKey !== currentProgramKey) {
+            // 时间表指示应切换到新节目
+            currentProgramKey = progKey;
+            playVideoForProgram(program);
             showProgramInfo(program);
-
-            if (program.isAd) {
-                adBadge.classList.add('visible');
-            } else {
-                adBadge.classList.remove('visible');
-            }
         }
 
         updateUI();
     }
 
     // ============================================================
+    // 时间模拟控制
+    // ============================================================
+    function initSimPanel() {
+        const simDayEl = document.getElementById('sim-day');
+        const simTimeEl = document.getElementById('sim-time');
+        const simApplyBtn = document.getElementById('sim-apply');
+        const simResetBtn = document.getElementById('sim-reset');
+
+        // 默认值设为当前时间
+        const now = new Date();
+        simDayEl.value = String(now.getDay());
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        simTimeEl.value = `${hh}:${mm}`;
+
+        simApplyBtn.addEventListener('click', () => {
+            const day = parseInt(simDayEl.value);
+            const [hours, minutes] = simTimeEl.value.split(':').map(Number);
+            setSimulatedTime(day, hours, minutes);
+
+            // 立即刷新当前频道播放
+            const channel = CHANNELS[currentChannelIndex];
+            const program = getCurrentProgram(channel);
+            currentProgramKey = `${currentChannelIndex}:${program.index}`;
+            playVideoForProgram(program);
+            showProgramInfo(program);
+            updateClock();
+            updateUI();
+
+            simApplyBtn.classList.add('active');
+            simResetBtn.classList.remove('active');
+        });
+
+        simResetBtn.addEventListener('click', () => {
+            clearSimulatedTime();
+
+            const channel = CHANNELS[currentChannelIndex];
+            const program = getCurrentProgram(channel);
+            currentProgramKey = `${currentChannelIndex}:${program.index}`;
+            playVideoForProgram(program);
+            showProgramInfo(program);
+            updateClock();
+            updateUI();
+
+            simResetBtn.classList.add('active');
+            simApplyBtn.classList.remove('active');
+            setTimeout(() => simResetBtn.classList.remove('active'), 1000);
+        });
+    }
+
+    // ============================================================
     // 初始化
     // ============================================================
-
     function initChannelList() {
         CHANNELS.forEach((channel, idx) => {
             const li = document.createElement('li');
@@ -1037,6 +1045,7 @@
 
     function init() {
         initChannelList();
+        initSimPanel();
         resizeStaticCanvas();
 
         // 开机动画
@@ -1050,26 +1059,23 @@
 
             const channel = CHANNELS[currentChannelIndex];
             const program = getCurrentProgram(channel);
-            lastProgramIndex = program.index;
-            playProgram(channel, program);
+            currentProgramKey = `${currentChannelIndex}:${program.index}`;
+            playVideoForProgram(program);
             showChannelBadge(channel);
             showProgramInfo(program);
             updateUI();
         }, 800);
 
-        // 时钟更新
         updateClock();
         setInterval(updateClock, 1000);
-
-        // 节目切换检测（每秒检查）
-        setInterval(checkProgramChange, 1000);
+        setInterval(checkScheduledProgramChange, 1000);
     }
 
     // ============================================================
     // 键盘控制
     // ============================================================
-
     document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
         switch(e.key) {
             case 'ArrowUp':
                 e.preventDefault();
@@ -1079,10 +1085,7 @@
                 e.preventDefault();
                 switchChannel(currentChannelIndex + 1);
                 break;
-            case '1':
-            case '2':
-            case '3':
-            case '4':
+            case '1': case '2': case '3': case '4':
                 switchChannel(parseInt(e.key) - 1);
                 break;
             case ' ':
@@ -1092,7 +1095,13 @@
         }
     });
 
-    // 启动
+    // 点击屏幕允许autoplay（浏览器策略）
+    document.getElementById('screen').addEventListener('click', () => {
+        if (videoEl.paused) {
+            videoEl.play().catch(() => {});
+        }
+    });
+
     window.addEventListener('load', init);
     window.addEventListener('resize', resizeStaticCanvas);
     </script>
