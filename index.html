@@ -139,6 +139,23 @@
             height: 100%;
         }
 
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            mix-blend-mode: overlay;
+        }
+
+        .noise-overlay.active {
+            opacity: 1;
+        }
+
         .channel-badge {
             position: absolute;
             top: 20px;
@@ -157,6 +174,29 @@
 
         .channel-badge.visible {
             opacity: 1;
+        }
+
+        .channel-logo {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 14;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        .channel-logo.visible {
+            opacity: 0.85;
+        }
+
+        .channel-logo.hidden {
+            opacity: 0;
         }
 
         .program-info {
@@ -205,6 +245,44 @@
 
         .ad-placeholder-badge.visible {
             opacity: 1;
+        }
+
+        .next-program-banner {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            z-index: 16;
+            background: linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(30,30,60,0.92) 100%);
+            color: #fff;
+            padding: 10px 15px;
+            font-size: 12px;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.4s ease-out, opacity 0.4s;
+            border-top: 2px solid #ffd700;
+        }
+
+        .next-program-banner.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .next-program-banner .banner-label {
+            color: #ffd700;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .next-program-banner .banner-title {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .next-program-banner .banner-time {
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 2px;
         }
 
         .channel-panel {
@@ -305,7 +383,6 @@
             display: block;
         }
 
-        /* 时间模拟面板 */
         .sim-panel {
             margin-top: 15px;
             border-top: 1px solid #444;
@@ -380,12 +457,231 @@
             border-color: #0f0;
         }
 
+        .effects-panel {
+            margin-top: 12px;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+        }
+
+        .effects-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 0;
+            color: #999;
+            font-size: 11px;
+        }
+
+        .toggle-switch {
+            width: 34px;
+            height: 17px;
+            background: #333;
+            border-radius: 9px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid #555;
+        }
+
+        .toggle-switch.on {
+            background: #553300;
+            border-color: #ffd700;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 11px;
+            height: 11px;
+            background: #888;
+            border-radius: 50%;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .toggle-switch.on::after {
+            transform: translateX(17px);
+            background: #ffd700;
+        }
+
+        .schedule-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: #2a2a44;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+        }
+
+        .schedule-btn:hover {
+            background: #3a3a55;
+            color: #ffd700;
+            border-color: #ffd700;
+        }
+
         .instructions {
             color: #666;
             font-size: 11px;
             text-align: center;
             margin-top: 12px;
             line-height: 1.6;
+        }
+
+        /* 节目单模态窗 */
+        .schedule-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.88);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .schedule-modal-overlay.open {
+            display: flex;
+        }
+
+        .schedule-modal {
+            background: linear-gradient(145deg, #2d2d44, #1e1e32);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #ccc;
+            font-size: 12px;
+            border: 1px solid #444;
+        }
+
+        .schedule-modal h2 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+
+        .schedule-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .schedule-tab {
+            background: #333;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .schedule-tab:hover {
+            background: #444;
+        }
+
+        .schedule-tab.active {
+            background: #553300;
+            color: #ffd700;
+            border-color: #ffd700;
+        }
+
+        .schedule-channel-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .schedule-ch-tab {
+            background: #2a2a3a;
+            color: #aaa;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .schedule-ch-tab.active {
+            background: #1a3320;
+            color: #0f0;
+            border-color: #0f0;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2px;
+        }
+
+        .schedule-row {
+            display: grid;
+            grid-template-columns: 110px 1fr 50px;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.02);
+            align-items: center;
+        }
+
+        .schedule-row:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .schedule-row.ad-row {
+            background: rgba(255,165,0,0.08);
+        }
+
+        .schedule-row.current-row {
+            background: rgba(0,255,0,0.1);
+            border: 1px solid rgba(0,255,0,0.3);
+        }
+
+        .schedule-row .time-col {
+            color: #0f0;
+            font-size: 11px;
+        }
+
+        .schedule-row .title-col {
+            color: #eee;
+        }
+
+        .schedule-row .type-col {
+            color: #888;
+            font-size: 10px;
+            text-align: right;
+        }
+
+        .schedule-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #888;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .schedule-close:hover {
+            color: #fff;
         }
 
         @keyframes tvTurnOn {
@@ -418,6 +714,28 @@
             animation: channelFlicker 0.3s ease-in-out;
         }
 
+        @keyframes glitchShake {
+            0% { transform: translate(0, 0); filter: none; }
+            20% { transform: translate(-3px, 1px); filter: hue-rotate(90deg); }
+            40% { transform: translate(2px, -2px); filter: saturate(3); }
+            60% { transform: translate(-1px, 2px); filter: hue-rotate(-60deg); }
+            80% { transform: translate(3px, -1px); filter: brightness(1.5); }
+            100% { transform: translate(0, 0); filter: none; }
+        }
+
+        .screen-container.glitching {
+            animation: glitchShake 0.2s ease-in-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .screen-container.glitching {
+                animation: none;
+            }
+            .noise-overlay {
+                display: none;
+            }
+        }
+
         @media (max-width: 1024px) {
             .tv-room {
                 flex-direction: column;
@@ -436,17 +754,24 @@
             <div class="screen-bezel">
                 <div class="screen-container" id="screen">
                     <video id="video-player" muted playsinline></video>
+                    <canvas class="noise-overlay" id="noise-canvas"></canvas>
                     <div class="crt-overlay scanlines"></div>
                     <div class="crt-overlay vignette"></div>
                     <div class="crt-overlay screen-curve"></div>
                     <div class="static-overlay" id="static-overlay">
                         <canvas id="static-canvas"></canvas>
                     </div>
+                    <div class="channel-logo" id="channel-logo"></div>
                     <div class="channel-badge" id="channel-badge">CH 01</div>
                     <div class="ad-placeholder-badge" id="ad-badge">广告</div>
                     <div class="program-info" id="program-info">
                         <div class="program-title" id="program-title">--</div>
                         <div class="program-time" id="program-time">--:-- ~ --:--</div>
+                    </div>
+                    <div class="next-program-banner" id="next-banner">
+                        <div class="banner-label">▶ 即将播出</div>
+                        <div class="banner-title" id="banner-title">--</div>
+                        <div class="banner-time" id="banner-time">--:--</div>
                     </div>
                 </div>
             </div>
@@ -462,7 +787,6 @@
                 <div class="sim-label" id="sim-label">[ 模拟时间 ]</div>
             </div>
 
-            <!-- 时间模拟面板 -->
             <div class="sim-panel">
                 <div class="sim-panel-title">— 演示时间控制 —</div>
                 <div class="sim-row">
@@ -487,17 +811,126 @@
                 </div>
             </div>
 
+            <div class="effects-panel">
+                <div class="sim-panel-title">— 效果设置 —</div>
+                <div class="effects-toggle">
+                    <span>模拟噪点</span>
+                    <div class="toggle-switch" id="toggle-noise"></div>
+                </div>
+                <div class="effects-toggle">
+                    <span>随机信号干扰</span>
+                    <div class="toggle-switch" id="toggle-glitch"></div>
+                </div>
+            </div>
+
+            <button class="schedule-btn" id="btn-schedule">节 目 单</button>
+
             <div class="instructions">
                 ↑↓ 或点击切换频道<br>
                 数字键 1-4 快速切换<br>
-                空格键 静音/取消静音
+                空格键 静音/取消静音<br>
+                G 键 打开节目单
             </div>
         </div>
     </div>
 
+    <div class="schedule-modal-overlay" id="schedule-modal"></div>
+
     <script>
     // ============================================================
-    // 真实视频源映射（公共CC授权短视频，播完自动循环直到时段结束）
+    // 扩展接口规范（第三方注册）
+    // ============================================================
+    const _retroListeners = {};
+
+    window.RetroTV = {
+        version: '2.0',
+
+        registerChannel(config) {
+            if (!config || !config.name) return false;
+            const id = config.id || (CHANNELS.length + 1);
+            const schedule = config.schedule
+                ? (config.schedule.weekday ? buildSchedule(config.schedule) : config.schedule)
+                : buildSchedule({ weekday: [], weekend: [] });
+            CHANNELS.push({
+                id: id,
+                name: config.name,
+                shortName: config.shortName || config.name.slice(0, 4),
+                schedule: schedule
+            });
+            if (document.getElementById('channel-list')) {
+                renderChannelList();
+            }
+            this._emit('channelRegistered', { id, name: config.name });
+            return id;
+        },
+
+        registerAdPack(timePeriod, ads) {
+            if (!AD_LIBRARY[timePeriod]) return false;
+            if (!Array.isArray(ads)) return false;
+            ads.forEach(ad => {
+                if (ad.id && ad.url) {
+                    AD_LIBRARY[timePeriod].push(ad);
+                }
+            });
+            this._emit('adPackRegistered', { timePeriod, count: ads.length });
+            return true;
+        },
+
+        registerSchedule(channelId, daySchedules) {
+            const ch = CHANNELS.find(c => c.id === channelId);
+            if (!ch) return false;
+            if (daySchedules.weekday || daySchedules.weekend) {
+                ch.schedule = buildSchedule(daySchedules);
+            } else {
+                Object.keys(daySchedules).forEach(day => {
+                    ch.schedule[parseInt(day)] = daySchedules[day];
+                });
+            }
+            this._emit('scheduleRegistered', { channelId });
+            return true;
+        },
+
+        registerVideoSources(sources) {
+            if (!sources || typeof sources !== 'object') return false;
+            Object.assign(VIDEO_SOURCES, sources);
+            return true;
+        },
+
+        getChannels() {
+            return CHANNELS.map(c => ({ id: c.id, name: c.name, shortName: c.shortName }));
+        },
+
+        getCurrentState() {
+            return {
+                channelIndex: currentChannelIndex,
+                channel: CHANNELS[currentChannelIndex],
+                program: getCurrentProgram(CHANNELS[currentChannelIndex]),
+                time: getNow(),
+                simulated: simulatedTime !== null
+            };
+        },
+
+        on(event, callback) {
+            if (!_retroListeners[event]) _retroListeners[event] = [];
+            _retroListeners[event].push(callback);
+        },
+
+        off(event, callback) {
+            if (!_retroListeners[event]) return;
+            _retroListeners[event] = _retroListeners[event].filter(cb => cb !== callback);
+        },
+
+        _emit(event, data) {
+            if (_retroListeners[event]) {
+                _retroListeners[event].forEach(cb => {
+                    try { cb(data); } catch(e) { console.warn('RetroTV listener error:', e); }
+                });
+            }
+        }
+    };
+
+    // ============================================================
+    // 视频源映射
     // ============================================================
     const VIDEO_SOURCES = {
         'news_morning':      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
@@ -520,14 +953,79 @@
     };
 
     // ============================================================
-    // 时间系统：支持真实时间和模拟时间
+    // 广告库与智能投放引擎
     // ============================================================
-    let simulatedTime = null; // null = 使用系统时间
+    const AD_LIBRARY = {
+        morning: [
+            { id: 'ad_cereal', title: '营养早餐麦片', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4', duration: 10, category: '食品' },
+            { id: 'ad_toothpaste', title: '亮白牙膏', url: 'https://www.w3schools.com/html/movie.mp4', duration: 10, category: '日用品' },
+            { id: 'ad_milk', title: '鲜牛奶', url: 'https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4', duration: 10, category: '食品' },
+            { id: 'ad_vitamins', title: '多维生素片', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', duration: 10, category: '保健' },
+        ],
+        afternoon: [
+            { id: 'ad_chips', title: '薯片广告', url: 'https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4', duration: 10, category: '零食' },
+            { id: 'ad_soda', title: '气泡饮料', url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10, category: '饮料' },
+            { id: 'ad_icecream', title: '冰淇淋广告', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4', duration: 10, category: '零食' },
+            { id: 'ad_candy', title: '巧克力糖果', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', duration: 10, category: '零食' },
+        ],
+        evening: [
+            { id: 'ad_ricecooker', title: '智能电饭煲', url: 'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4', duration: 10, category: '家电' },
+            { id: 'ad_washer', title: '全自动洗衣机', url: 'https://www.w3schools.com/html/movie.mp4', duration: 10, category: '家电' },
+            { id: 'ad_tv', title: '超清电视机', url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4', duration: 10, category: '家电' },
+            { id: 'ad_aircon', title: '变频空调', url: 'https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_2MB.mp4', duration: 10, category: '家电' },
+        ],
+        latenight: [
+            { id: 'ad_sleep', title: '安神助眠茶', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', duration: 10, category: '保健' },
+            { id: 'ad_pillow', title: '记忆枕头', url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10, category: '家居' },
+            { id: 'ad_mattress', title: '乳胶床垫', url: 'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4', duration: 10, category: '家居' },
+        ],
+    };
+
+    const AD_CONFIG = {
+        defaultDuration: 10,
+        historySize: 5,
+    };
+
+    let adPlayHistory = [];
+    let currentAdPlaying = null;
+
+    function getTimePeriod(now) {
+        const h = now.getHours();
+        if (h >= 6 && h < 12) return 'morning';
+        if (h >= 12 && h < 18) return 'afternoon';
+        if (h >= 18 && h < 24) return 'evening';
+        return 'latenight';
+    }
+
+    function selectAdForSlot() {
+        const period = getTimePeriod(getNow());
+        const pool = AD_LIBRARY[period];
+        if (!pool || pool.length === 0) return null;
+
+        let candidates = pool.filter(ad => !adPlayHistory.includes(ad.id));
+        if (candidates.length === 0) {
+            adPlayHistory = [];
+            candidates = pool;
+        }
+
+        const selected = candidates[Math.floor(Math.random() * candidates.length)];
+        adPlayHistory.push(selected.id);
+        if (adPlayHistory.length > AD_CONFIG.historySize) {
+            adPlayHistory.shift();
+        }
+
+        currentAdPlaying = selected;
+        window.RetroTV._emit('adPlay', { ad: selected, period });
+        return selected;
+    }
+
+    // ============================================================
+    // 时间系统
+    // ============================================================
+    let simulatedTime = null;
 
     function getNow() {
-        if (simulatedTime) {
-            return simulatedTime;
-        }
+        if (simulatedTime) return simulatedTime;
         return new Date();
     }
 
@@ -711,20 +1209,59 @@
     ];
 
     // ============================================================
+    // 频道台标配置
+    // ============================================================
+    const CHANNEL_LOGOS = {
+        1: { text: 'CCTV-新闻', color: '#fff', bg: 'rgba(180,20,20,0.6)' },
+        2: { text: 'TV剧场', color: '#ffd700', bg: 'rgba(0,0,0,0.5)' },
+        3: { text: 'MOVIE', color: '#fff', bg: 'rgba(0,50,120,0.5)' },
+        4: { text: '卡通', color: '#ff69b4', bg: 'rgba(0,0,0,0.5)' },
+    };
+
+    const LOGO_CONFIG = {
+        autoHide: true,
+        hideAfter: 10000,
+    };
+
+    // ============================================================
+    // 效果配置
+    // ============================================================
+    const EFFECTS_CONFIG = {
+        analogNoise: { enabled: false, intensity: 0.04 },
+        randomGlitch: { enabled: false, intervalMin: 20000, intervalMax: 90000 },
+    };
+
+    // ============================================================
+    // 预告横幅配置
+    // ============================================================
+    const BANNER_CONFIG = {
+        showBeforeEnd: 60,
+        displayDuration: 8000,
+    };
+
+    // ============================================================
     // 播放器状态
     // ============================================================
     let currentChannelIndex = 0;
-    let currentProgramKey = null; // "channelIdx:progIndex" 用于检测节目变更
+    let currentProgramKey = null;
     let isSwitching = false;
     let badgeTimeout = null;
     let infoTimeout = null;
     let staticAnimFrame = null;
+    let logoTimeout = null;
+    let bannerTimeout = null;
+    let bannerShownForKey = null;
+    let glitchTimer = null;
+    let noiseTimer = null;
 
     const videoEl = document.getElementById('video-player');
     const staticOverlay = document.getElementById('static-overlay');
     const staticCanvas = document.getElementById('static-canvas');
     const staticCtx = staticCanvas.getContext('2d');
+    const noiseCanvas = document.getElementById('noise-canvas');
+    const noiseCtx = noiseCanvas.getContext('2d');
     const channelBadge = document.getElementById('channel-badge');
+    const channelLogoEl = document.getElementById('channel-logo');
     const adBadge = document.getElementById('ad-badge');
     const programInfo = document.getElementById('program-info');
     const programTitle = document.getElementById('program-title');
@@ -733,6 +1270,9 @@
     const clockEl = document.getElementById('clock');
     const dateEl = document.getElementById('date-display');
     const simLabel = document.getElementById('sim-label');
+    const nextBanner = document.getElementById('next-banner');
+    const bannerTitleEl = document.getElementById('banner-title');
+    const bannerTimeEl = document.getElementById('banner-time');
 
     // ============================================================
     // 工具函数
@@ -776,11 +1316,13 @@
     }
 
     // ============================================================
-    // 雪花效果
+    // 雪花/静态效果
     // ============================================================
     function resizeStaticCanvas() {
         staticCanvas.width = staticCanvas.offsetWidth || 640;
         staticCanvas.height = staticCanvas.offsetHeight || 480;
+        noiseCanvas.width = noiseCanvas.offsetWidth || 640;
+        noiseCanvas.height = noiseCanvas.offsetHeight || 480;
     }
 
     function drawStatic() {
@@ -814,16 +1356,228 @@
     }
 
     // ============================================================
-    // 真实视频播放
+    // 模拟噪点效果
+    // ============================================================
+    function drawNoise() {
+        if (!EFFECTS_CONFIG.analogNoise.enabled) return;
+        const w = noiseCanvas.width;
+        const h = noiseCanvas.height;
+        const imageData = noiseCtx.createImageData(w, h);
+        const data = imageData.data;
+        const intensity = EFFECTS_CONFIG.analogNoise.intensity;
+        const threshold = intensity * 255;
+
+        for (let i = 0; i < data.length; i += 4) {
+            if (Math.random() * 255 < threshold) {
+                const val = Math.random() * 200 + 55;
+                data[i] = val;
+                data[i + 1] = val;
+                data[i + 2] = val;
+                data[i + 3] = 120;
+            }
+        }
+        noiseCtx.putImageData(imageData, 0, 0);
+    }
+
+    function startNoise() {
+        EFFECTS_CONFIG.analogNoise.enabled = true;
+        noiseCanvas.classList.add('active');
+        if (noiseTimer) clearInterval(noiseTimer);
+        noiseTimer = setInterval(drawNoise, 100);
+        drawNoise();
+    }
+
+    function stopNoise() {
+        EFFECTS_CONFIG.analogNoise.enabled = false;
+        noiseCanvas.classList.remove('active');
+        if (noiseTimer) {
+            clearInterval(noiseTimer);
+            noiseTimer = null;
+        }
+        noiseCtx.clearRect(0, 0, noiseCanvas.width, noiseCanvas.height);
+    }
+
+    // ============================================================
+    // 随机信号干扰/花屏
+    // ============================================================
+    function triggerGlitch() {
+        const screen = document.getElementById('screen');
+        screen.classList.add('glitching');
+        setTimeout(() => {
+            screen.classList.remove('glitching');
+        }, 200 + Math.random() * 150);
+    }
+
+    function scheduleNextGlitch() {
+        if (!EFFECTS_CONFIG.randomGlitch.enabled) return;
+        const min = EFFECTS_CONFIG.randomGlitch.intervalMin;
+        const max = EFFECTS_CONFIG.randomGlitch.intervalMax;
+        const delay = min + Math.random() * (max - min);
+        glitchTimer = setTimeout(() => {
+            if (EFFECTS_CONFIG.randomGlitch.enabled) {
+                triggerGlitch();
+                scheduleNextGlitch();
+            }
+        }, delay);
+    }
+
+    function startGlitch() {
+        EFFECTS_CONFIG.randomGlitch.enabled = true;
+        scheduleNextGlitch();
+    }
+
+    function stopGlitch() {
+        EFFECTS_CONFIG.randomGlitch.enabled = false;
+        if (glitchTimer) {
+            clearTimeout(glitchTimer);
+            glitchTimer = null;
+        }
+    }
+
+    // ============================================================
+    // 频道台标
+    // ============================================================
+    function showChannelLogo(channel) {
+        const logoConf = CHANNEL_LOGOS[channel.id];
+        if (!logoConf) {
+            channelLogoEl.classList.remove('visible');
+            return;
+        }
+        channelLogoEl.textContent = logoConf.text;
+        channelLogoEl.style.color = logoConf.color;
+        channelLogoEl.style.background = logoConf.bg;
+        channelLogoEl.classList.remove('hidden');
+        channelLogoEl.classList.add('visible');
+
+        clearTimeout(logoTimeout);
+        if (LOGO_CONFIG.autoHide && LOGO_CONFIG.hideAfter > 0) {
+            logoTimeout = setTimeout(() => {
+                channelLogoEl.classList.add('hidden');
+                channelLogoEl.classList.remove('visible');
+            }, LOGO_CONFIG.hideAfter);
+        }
+    }
+
+    // ============================================================
+    // 节目预告横幅
+    // ============================================================
+    function checkUpcomingBanner() {
+        const channel = CHANNELS[currentChannelIndex];
+        const program = getCurrentProgram(channel);
+        if (!program || program.isAd) return;
+
+        const now = getNow();
+        const currentSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        let endMin = timeToMinutes(program.end);
+        if (endMin === 0) endMin = 1440;
+        const endSec = endMin * 60;
+
+        const remaining = endSec - currentSec;
+        const progKey = `${currentChannelIndex}:${program.index}`;
+
+        if (remaining > 0 && remaining <= BANNER_CONFIG.showBeforeEnd && bannerShownForKey !== progKey) {
+            const nextProg = getNextProgramInSchedule(channel, program.index);
+            if (nextProg && !nextProg.isAd) {
+                bannerShownForKey = progKey;
+                showNextBanner(nextProg);
+            }
+        }
+    }
+
+    function showNextBanner(nextProgram) {
+        bannerTitleEl.textContent = nextProgram.title;
+        bannerTimeEl.textContent = `${nextProgram.start} ~ ${nextProgram.end}`;
+        nextBanner.classList.add('visible');
+
+        clearTimeout(bannerTimeout);
+        bannerTimeout = setTimeout(() => {
+            nextBanner.classList.remove('visible');
+        }, BANNER_CONFIG.displayDuration);
+    }
+
+    function hideNextBanner() {
+        nextBanner.classList.remove('visible');
+        clearTimeout(bannerTimeout);
+    }
+
+    // ============================================================
+    // 频道预加载
+    // ============================================================
+    const preloadPool = new Map();
+
+    function updatePreloadPool() {
+        const total = CHANNELS.length;
+        const prevIdx = (currentChannelIndex - 1 + total) % total;
+        const nextIdx = (currentChannelIndex + 1) % total;
+        const needed = new Set([prevIdx, nextIdx]);
+
+        preloadPool.forEach((el, idx) => {
+            if (!needed.has(idx)) {
+                el.src = '';
+                el.load();
+                preloadPool.delete(idx);
+            }
+        });
+
+        needed.forEach(idx => {
+            if (idx === currentChannelIndex) return;
+            const ch = CHANNELS[idx];
+            const prog = getCurrentProgram(ch);
+            let url;
+            if (prog.isAd) {
+                const period = getTimePeriod(getNow());
+                const pool = AD_LIBRARY[period];
+                url = pool && pool.length > 0 ? pool[0].url : VIDEO_SOURCES[prog.id];
+            } else {
+                url = VIDEO_SOURCES[prog.id];
+            }
+            if (!url) return;
+
+            let el = preloadPool.get(idx);
+            if (!el) {
+                el = document.createElement('video');
+                el.muted = true;
+                el.preload = 'auto';
+                el.style.display = 'none';
+                document.body.appendChild(el);
+                preloadPool.set(idx, el);
+            }
+            if (el.getAttribute('data-url') !== url) {
+                el.src = url;
+                el.setAttribute('data-url', url);
+                el.load();
+            }
+        });
+    }
+
+    // ============================================================
+    // 视频播放（集成广告引擎）
     // ============================================================
     function playVideoForProgram(program) {
-        const url = VIDEO_SOURCES[program.id];
+        let url;
+
+        if (program.isAd) {
+            const ad = selectAdForSlot();
+            if (ad) {
+                url = ad.url;
+                adBadge.textContent = `广告 · ${ad.title}`;
+                adBadge.classList.add('visible');
+            } else {
+                url = VIDEO_SOURCES[program.id];
+                adBadge.textContent = '广告';
+                adBadge.classList.add('visible');
+            }
+        } else {
+            url = VIDEO_SOURCES[program.id];
+            adBadge.classList.remove('visible');
+            currentAdPlaying = null;
+        }
+
         if (!url) {
             console.warn('No video URL for program:', program.id);
             return;
         }
 
-        // 清除之前的 srcObject（如果有canvas流残留）
         if (videoEl.srcObject) {
             videoEl.srcObject = null;
         }
@@ -831,32 +1585,32 @@
         videoEl.src = url;
         videoEl.load();
         videoEl.play().catch(e => {
-            console.log('Autoplay blocked, user interaction needed:', e.message);
+            console.log('Autoplay blocked:', e.message);
         });
-
-        // 更新广告标识
-        if (program.isAd) {
-            adBadge.classList.add('visible');
-        } else {
-            adBadge.classList.remove('visible');
-        }
     }
 
     // ============================================================
-    // 视频结束事件：自动进入下一节目
+    // 视频结束事件
     // ============================================================
     videoEl.addEventListener('ended', () => {
         const channel = CHANNELS[currentChannelIndex];
         const currentProg = getCurrentProgram(channel);
-
-        // 检查当前时间段是否还在同一节目（视频比时间段短，需要循环）
         const progKey = `${currentChannelIndex}:${currentProg.index}`;
+
         if (progKey === currentProgramKey) {
-            // 还在同一时间段内，视频比节目时间短 → 循环播放
+            if (currentProg.isAd) {
+                const ad = selectAdForSlot();
+                if (ad) {
+                    videoEl.src = ad.url;
+                    videoEl.load();
+                    videoEl.play().catch(() => {});
+                    adBadge.textContent = `广告 · ${ad.title}`;
+                    return;
+                }
+            }
             videoEl.currentTime = 0;
             videoEl.play().catch(() => {});
         } else {
-            // 时间已经进入下一个节目段 → 切换到下一节目
             advanceToProgram(currentProg);
         }
     });
@@ -865,10 +1619,14 @@
         currentProgramKey = `${currentChannelIndex}:${program.index}`;
         playVideoForProgram(program);
         showProgramInfo(program);
+        window.RetroTV._emit('programChange', {
+            channel: CHANNELS[currentChannelIndex],
+            program: program
+        });
     }
 
     // ============================================================
-    // 频道切换
+    // 频道切换（集成预加载+台标）
     // ============================================================
     function switchChannel(newIndex, immediate = false) {
         if (isSwitching) return;
@@ -879,24 +1637,27 @@
         const channel = CHANNELS[newIndex];
         const program = getCurrentProgram(channel);
 
+        hideNextBanner();
+        bannerShownForKey = null;
+
         if (immediate) {
             currentChannelIndex = newIndex;
             currentProgramKey = `${newIndex}:${program.index}`;
             playVideoForProgram(program);
             updateUI();
+            showChannelLogo(channel);
             isSwitching = false;
+            setTimeout(updatePreloadPool, 500);
             return;
         }
 
-        // 暂停当前视频
         videoEl.pause();
-
-        // 雪花 + 闪烁过渡
         showStatic();
         const screen = document.getElementById('screen');
         screen.classList.add('flickering');
 
-        const delay = 300 + Math.random() * 500;
+        const hasPreload = preloadPool.has(newIndex);
+        const delay = hasPreload ? 150 + Math.random() * 200 : 300 + Math.random() * 500;
 
         setTimeout(() => {
             currentChannelIndex = newIndex;
@@ -906,8 +1667,16 @@
             screen.classList.remove('flickering');
             updateUI();
             showChannelBadge(channel);
+            showChannelLogo(channel);
             showProgramInfo(program);
             isSwitching = false;
+
+            window.RetroTV._emit('channelChange', {
+                channel: channel,
+                program: program
+            });
+
+            setTimeout(updatePreloadPool, 500);
         }, delay);
     }
 
@@ -938,8 +1707,10 @@
         items.forEach((item, idx) => {
             item.classList.toggle('active', idx === currentChannelIndex);
             const nowPlaying = item.querySelector('.channel-now-playing');
-            const prog = getCurrentProgram(CHANNELS[idx]);
-            nowPlaying.textContent = prog.title;
+            if (idx < CHANNELS.length) {
+                const prog = getCurrentProgram(CHANNELS[idx]);
+                nowPlaying.textContent = prog.title;
+            }
         });
     }
 
@@ -956,7 +1727,7 @@
     }
 
     // ============================================================
-    // 节目轮询：检测时间表驱动的切换
+    // 节目轮询 + 横幅检测
     // ============================================================
     function checkScheduledProgramChange() {
         const channel = CHANNELS[currentChannelIndex];
@@ -964,13 +1735,125 @@
         const progKey = `${currentChannelIndex}:${program.index}`;
 
         if (progKey !== currentProgramKey) {
-            // 时间表指示应切换到新节目
             currentProgramKey = progKey;
             playVideoForProgram(program);
             showProgramInfo(program);
+            bannerShownForKey = null;
+            window.RetroTV._emit('programChange', { channel, program });
         }
 
+        checkUpcomingBanner();
         updateUI();
+    }
+
+    // ============================================================
+    // 每周节目单
+    // ============================================================
+    function buildScheduleModal() {
+        const modal = document.getElementById('schedule-modal');
+        const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const now = getNow();
+        const today = now.getDay();
+
+        let html = `<div class="schedule-modal" style="position:relative;">
+            <span class="schedule-close" id="schedule-close">&times;</span>
+            <h2>每 周 节 目 单</h2>
+            <div class="schedule-tabs" id="schedule-day-tabs">`;
+
+        for (let i = 0; i < 7; i++) {
+            const dayIdx = (today + i) % 7;
+            const label = i === 0 ? `${dayNames[dayIdx]}(今天)` : dayNames[dayIdx];
+            html += `<div class="schedule-tab${i === 0 ? ' active' : ''}" data-day="${dayIdx}">${label}</div>`;
+        }
+
+        html += `</div>
+            <div class="schedule-channel-tabs" id="schedule-ch-tabs">`;
+
+        CHANNELS.forEach((ch, idx) => {
+            html += `<div class="schedule-ch-tab${idx === 0 ? ' active' : ''}" data-ch="${idx}">${ch.shortName}</div>`;
+        });
+
+        html += `</div>
+            <div class="schedule-grid" id="schedule-content"></div>
+        </div>`;
+
+        modal.innerHTML = html;
+
+        modal.querySelector('#schedule-close').addEventListener('click', hideScheduleModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) hideScheduleModal();
+        });
+
+        const dayTabs = modal.querySelectorAll('.schedule-tab');
+        const chTabs = modal.querySelectorAll('.schedule-ch-tab');
+
+        dayTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                dayTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderScheduleContent();
+            });
+        });
+
+        chTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                chTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderScheduleContent();
+            });
+        });
+    }
+
+    function renderScheduleContent() {
+        const modal = document.getElementById('schedule-modal');
+        const activeDay = modal.querySelector('.schedule-tab.active');
+        const activeCh = modal.querySelector('.schedule-ch-tab.active');
+        if (!activeDay || !activeCh) return;
+
+        const dayIdx = parseInt(activeDay.dataset.day);
+        const chIdx = parseInt(activeCh.dataset.ch);
+        const channel = CHANNELS[chIdx];
+        if (!channel) return;
+
+        const schedule = channel.schedule[dayIdx];
+        if (!schedule) return;
+
+        const now = getNow();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const isToday = dayIdx === now.getDay();
+
+        let html = '';
+        schedule.forEach((prog) => {
+            const startMin = timeToMinutes(prog.start);
+            let endMin = timeToMinutes(prog.end);
+            if (endMin === 0) endMin = 1440;
+
+            let rowClass = 'schedule-row';
+            if (prog.isAd) rowClass += ' ad-row';
+            if (isToday && currentMinutes >= startMin && currentMinutes < endMin && chIdx === currentChannelIndex) {
+                rowClass += ' current-row';
+            }
+
+            const typeLabel = prog.isAd ? '广告' : '节目';
+            html += `<div class="${rowClass}">
+                <span class="time-col">${prog.start} - ${prog.end}</span>
+                <span class="title-col">${prog.title}</span>
+                <span class="type-col">${typeLabel}</span>
+            </div>`;
+        });
+
+        modal.querySelector('#schedule-content').innerHTML = html;
+    }
+
+    function showScheduleModal() {
+        const modal = document.getElementById('schedule-modal');
+        buildScheduleModal();
+        renderScheduleContent();
+        modal.classList.add('open');
+    }
+
+    function hideScheduleModal() {
+        document.getElementById('schedule-modal').classList.remove('open');
     }
 
     // ============================================================
@@ -982,7 +1865,6 @@
         const simApplyBtn = document.getElementById('sim-apply');
         const simResetBtn = document.getElementById('sim-reset');
 
-        // 默认值设为当前时间
         const now = new Date();
         simDayEl.value = String(now.getDay());
         const hh = String(now.getHours()).padStart(2, '0');
@@ -994,7 +1876,6 @@
             const [hours, minutes] = simTimeEl.value.split(':').map(Number);
             setSimulatedTime(day, hours, minutes);
 
-            // 立即刷新当前频道播放
             const channel = CHANNELS[currentChannelIndex];
             const program = getCurrentProgram(channel);
             currentProgramKey = `${currentChannelIndex}:${program.index}`;
@@ -1002,6 +1883,7 @@
             showProgramInfo(program);
             updateClock();
             updateUI();
+            bannerShownForKey = null;
 
             simApplyBtn.classList.add('active');
             simResetBtn.classList.remove('active');
@@ -1017,6 +1899,7 @@
             showProgramInfo(program);
             updateClock();
             updateUI();
+            bannerShownForKey = null;
 
             simResetBtn.classList.add('active');
             simApplyBtn.classList.remove('active');
@@ -1025,12 +1908,39 @@
     }
 
     // ============================================================
+    // 效果面板初始化
+    // ============================================================
+    function initEffectsPanel() {
+        const toggleNoise = document.getElementById('toggle-noise');
+        const toggleGlitch = document.getElementById('toggle-glitch');
+
+        toggleNoise.addEventListener('click', () => {
+            toggleNoise.classList.toggle('on');
+            if (toggleNoise.classList.contains('on')) {
+                startNoise();
+            } else {
+                stopNoise();
+            }
+        });
+
+        toggleGlitch.addEventListener('click', () => {
+            toggleGlitch.classList.toggle('on');
+            if (toggleGlitch.classList.contains('on')) {
+                startGlitch();
+            } else {
+                stopGlitch();
+            }
+        });
+    }
+
+    // ============================================================
     // 初始化
     // ============================================================
-    function initChannelList() {
+    function renderChannelList() {
+        channelListEl.innerHTML = '';
         CHANNELS.forEach((channel, idx) => {
             const li = document.createElement('li');
-            li.className = 'channel-item' + (idx === 0 ? ' active' : '');
+            li.className = 'channel-item' + (idx === currentChannelIndex ? ' active' : '');
             li.innerHTML = `
                 <div class="channel-number">${channel.id}</div>
                 <div>
@@ -1044,11 +1954,13 @@
     }
 
     function init() {
-        initChannelList();
+        renderChannelList();
         initSimPanel();
+        initEffectsPanel();
         resizeStaticCanvas();
 
-        // 开机动画
+        document.getElementById('btn-schedule').addEventListener('click', showScheduleModal);
+
         const screen = document.getElementById('screen');
         screen.classList.add('turning-on');
         showStatic();
@@ -1062,8 +1974,11 @@
             currentProgramKey = `${currentChannelIndex}:${program.index}`;
             playVideoForProgram(program);
             showChannelBadge(channel);
+            showChannelLogo(channel);
             showProgramInfo(program);
             updateUI();
+
+            setTimeout(updatePreloadPool, 1000);
         }, 800);
 
         updateClock();
@@ -1076,6 +1991,15 @@
     // ============================================================
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+        if (document.getElementById('schedule-modal').classList.contains('open')) {
+            if (e.key === 'Escape' || e.key.toLowerCase() === 'g') {
+                hideScheduleModal();
+                e.preventDefault();
+            }
+            return;
+        }
+
         switch(e.key) {
             case 'ArrowUp':
                 e.preventDefault();
@@ -1092,10 +2016,13 @@
                 e.preventDefault();
                 videoEl.muted = !videoEl.muted;
                 break;
+            case 'g': case 'G':
+                e.preventDefault();
+                showScheduleModal();
+                break;
         }
     });
 
-    // 点击屏幕允许autoplay（浏览器策略）
     document.getElementById('screen').addEventListener('click', () => {
         if (videoEl.paused) {
             videoEl.play().catch(() => {});
