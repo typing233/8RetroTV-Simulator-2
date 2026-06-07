@@ -827,7 +827,7 @@
 
             <div class="instructions">
                 ↑↓ 或点击切换频道<br>
-                数字键 1-4 快速切换<br>
+                数字键 1-9 快速切换<br>
                 空格键 静音/取消静音<br>
                 G 键 打开节目单
             </div>
@@ -840,23 +840,133 @@
     // ============================================================
     // 扩展接口规范（第三方注册）
     // ============================================================
+    //
+    // ## 使用说明
+    // 第三方开发者可通过 window.RetroTV 全局对象注册新内容。
+    // 在页面加载后（DOMContentLoaded 之后）调用以下方法即可。
+    //
+    // ## registerChannel(config)
+    // 注册新频道。
+    // @param {Object} config
+    //   - name {string} 必填，频道名称，如 "体育频道"
+    //   - shortName {string} 可选，台标简称（最多4字），默认取 name 前4字
+    //   - id {number} 可选，频道编号，默认自增
+    //   - schedule {Object} 可选，节目表配置
+    //     格式A: { weekday: [...], weekend: [...] }
+    //     格式B: { 0: [...], 1: [...], ..., 6: [...] } (0=周日)
+    //     每条节目: { id: string, title: string, start: 'HH:MM', end: 'HH:MM', isAd?: boolean }
+    //   - logo {Object} 可选，台标样式 { text, color, bg }
+    // @returns {number|false} 返回频道ID或false
+    //
+    // ## registerAdPack(timePeriod, ads)
+    // 注册广告包到指定时段。
+    // @param {string} timePeriod 'morning'|'afternoon'|'evening'|'latenight'
+    // @param {Array} ads 广告数组
+    //   每条广告: {
+    //     id: string,       必填，唯一标识
+    //     title: string,    必填，广告标题（显示在角标上）
+    //     url: string,      必填，视频URL
+    //     duration: number, 可选，播放秒数（默认使用 AD_CONFIG.defaultDuration）
+    //     category: string  可选，分类标签如 '家电','零食','饮料'
+    //   }
+    // @returns {boolean}
+    //
+    // ## registerSchedule(channelId, daySchedules)
+    // 替换或更新指定频道的节目表。
+    // @param {number} channelId 频道ID
+    // @param {Object} daySchedules
+    //   格式A: { weekday: [...], weekend: [...] }
+    //   格式B: { 0: [...], 1: [...], ..., 6: [...] }
+    //   节目条目格式: { id: string, title: string, start: 'HH:MM', end: 'HH:MM', isAd?: boolean }
+    // @returns {boolean}
+    //
+    // ## registerVideoSources(sources)
+    // 注册视频源映射。节目表中的 id 字段将通过此映射找到视频URL。
+    // @param {Object} sources  { 'video_id': 'https://...mp4', ... }
+    // @returns {boolean}
+    //
+    // ## 事件监听 on(event, callback) / off(event, callback)
+    // 可监听的事件:
+    //   - 'channelChange'     频道切换完成 → { channel, program }
+    //   - 'programChange'     节目自动切换 → { channel, program }
+    //   - 'adPlay'            广告开始播放 → { ad, period }
+    //   - 'channelRegistered' 频道注册成功 → { id, name }
+    //   - 'adPackRegistered'  广告包注册   → { timePeriod, count }
+    //   - 'scheduleRegistered' 节目表更新  → { channelId }
+    //
+    // ## 示例
+    // RetroTV.registerVideoSources({
+    //     'sports_live': 'https://example.com/sports.mp4',
+    //     'sports_replay': 'https://example.com/replay.mp4',
+    // });
+    // RetroTV.registerChannel({
+    //     name: '体育频道',
+    //     shortName: '体育',
+    //     logo: { text: '体育', color: '#fff', bg: 'rgba(0,100,0,0.6)' },
+    //     schedule: {
+    //         weekday: [
+    //             { id: 'sports_live', title: '体育晨练', start: '06:00', end: '12:00' },
+    //             { id: 'ad_slot_1', title: '广告', start: '12:00', end: '12:05', isAd: true },
+    //             { id: 'sports_replay', title: '赛事回放', start: '12:05', end: '00:00' },
+    //             { id: 'sports_live', title: '午夜重播', start: '00:00', end: '06:00' },
+    //         ],
+    //         weekend: [
+    //             { id: 'sports_live', title: '周末赛事', start: '08:00', end: '00:00' },
+    //             { id: 'sports_replay', title: '午夜重播', start: '00:00', end: '08:00' },
+    //         ]
+    //     }
+    // });
+    // RetroTV.registerAdPack('afternoon', [
+    //     { id: 'ad_sportdrink', title: '运动饮料', url: 'https://example.com/ad.mp4', duration: 20, category: '饮料' }
+    // ]);
+    // ============================================================
+
     const _retroListeners = {};
 
     window.RetroTV = {
         version: '2.0',
 
         registerChannel(config) {
-            if (!config || !config.name) return false;
-            const id = config.id || (CHANNELS.length + 1);
-            const schedule = config.schedule
-                ? (config.schedule.weekday ? buildSchedule(config.schedule) : config.schedule)
-                : buildSchedule({ weekday: [], weekend: [] });
-            CHANNELS.push({
-                id: id,
-                name: config.name,
-                shortName: config.shortName || config.name.slice(0, 4),
-                schedule: schedule
-            });
+            if (!config || typeof config.name !== 'string' || !config.name.trim()) {
+                console.warn('RetroTV.registerChannel: name (string) 为必填字段');
+                return false;
+            }
+            const id = (typeof config.id === 'number' && config.id > 0) ? config.id : (CHANNELS.length + 1);
+            if (CHANNELS.find(c => c.id === id)) {
+                console.warn(`RetroTV.registerChannel: id=${id} 已存在`);
+                return false;
+            }
+
+            let schedule;
+            if (config.schedule) {
+                if (config.schedule.weekday || config.schedule.weekend) {
+                    const weekday = Array.isArray(config.schedule.weekday) ? config.schedule.weekday : [];
+                    const weekend = Array.isArray(config.schedule.weekend) ? config.schedule.weekend : [];
+                    schedule = buildSchedule({ weekday, weekend });
+                } else {
+                    schedule = {};
+                    for (let d = 0; d < 7; d++) {
+                        schedule[d] = Array.isArray(config.schedule[d]) ? config.schedule[d] : [];
+                    }
+                }
+            } else {
+                schedule = buildSchedule({ weekday: [], weekend: [] });
+            }
+
+            const shortName = config.shortName || config.name.slice(0, 4);
+            CHANNELS.push({ id, name: config.name, shortName, schedule });
+
+            // 注册台标
+            if (config.logo && config.logo.text) {
+                CHANNEL_LOGOS[id] = {
+                    text: config.logo.text || shortName,
+                    color: config.logo.color || '#fff',
+                    bg: config.logo.bg || 'rgba(0,0,0,0.5)',
+                };
+            } else {
+                CHANNEL_LOGOS[id] = { text: shortName, color: '#fff', bg: 'rgba(0,0,0,0.5)' };
+            }
+
             if (document.getElementById('channel-list')) {
                 renderChannelList();
             }
@@ -865,25 +975,61 @@
         },
 
         registerAdPack(timePeriod, ads) {
-            if (!AD_LIBRARY[timePeriod]) return false;
-            if (!Array.isArray(ads)) return false;
+            const validPeriods = ['morning', 'afternoon', 'evening', 'latenight'];
+            if (!validPeriods.includes(timePeriod)) {
+                console.warn(`RetroTV.registerAdPack: timePeriod 须为 ${validPeriods.join('|')}`);
+                return false;
+            }
+            if (!Array.isArray(ads) || ads.length === 0) {
+                console.warn('RetroTV.registerAdPack: ads 须为非空数组');
+                return false;
+            }
+            let added = 0;
             ads.forEach(ad => {
-                if (ad.id && ad.url) {
-                    AD_LIBRARY[timePeriod].push(ad);
+                if (!ad.id || !ad.url || !ad.title) {
+                    console.warn('RetroTV.registerAdPack: 每条广告须含 id, title, url 字段，跳过:', ad);
+                    return;
                 }
+                if (AD_LIBRARY[timePeriod].find(a => a.id === ad.id)) {
+                    return; // 去重
+                }
+                AD_LIBRARY[timePeriod].push({
+                    id: ad.id,
+                    title: ad.title,
+                    url: ad.url,
+                    duration: (typeof ad.duration === 'number' && ad.duration > 0) ? ad.duration : AD_CONFIG.defaultDuration,
+                    category: ad.category || '',
+                });
+                added++;
             });
-            this._emit('adPackRegistered', { timePeriod, count: ads.length });
-            return true;
+            this._emit('adPackRegistered', { timePeriod, count: added });
+            return added > 0;
         },
 
         registerSchedule(channelId, daySchedules) {
+            if (typeof channelId !== 'number') {
+                console.warn('RetroTV.registerSchedule: channelId 须为数字');
+                return false;
+            }
             const ch = CHANNELS.find(c => c.id === channelId);
-            if (!ch) return false;
+            if (!ch) {
+                console.warn(`RetroTV.registerSchedule: 频道 id=${channelId} 不存在`);
+                return false;
+            }
+            if (!daySchedules || typeof daySchedules !== 'object') {
+                console.warn('RetroTV.registerSchedule: daySchedules 须为对象');
+                return false;
+            }
             if (daySchedules.weekday || daySchedules.weekend) {
-                ch.schedule = buildSchedule(daySchedules);
+                const weekday = Array.isArray(daySchedules.weekday) ? daySchedules.weekday : [];
+                const weekend = Array.isArray(daySchedules.weekend) ? daySchedules.weekend : [];
+                ch.schedule = buildSchedule({ weekday, weekend });
             } else {
                 Object.keys(daySchedules).forEach(day => {
-                    ch.schedule[parseInt(day)] = daySchedules[day];
+                    const d = parseInt(day);
+                    if (d >= 0 && d <= 6 && Array.isArray(daySchedules[day])) {
+                        ch.schedule[d] = daySchedules[day];
+                    }
                 });
             }
             this._emit('scheduleRegistered', { channelId });
@@ -891,13 +1037,31 @@
         },
 
         registerVideoSources(sources) {
-            if (!sources || typeof sources !== 'object') return false;
-            Object.assign(VIDEO_SOURCES, sources);
-            return true;
+            if (!sources || typeof sources !== 'object') {
+                console.warn('RetroTV.registerVideoSources: sources 须为对象 { id: url }');
+                return false;
+            }
+            let added = 0;
+            Object.entries(sources).forEach(([id, url]) => {
+                if (typeof id === 'string' && typeof url === 'string' && url.trim()) {
+                    VIDEO_SOURCES[id] = url;
+                    added++;
+                }
+            });
+            return added > 0;
         },
 
         getChannels() {
-            return CHANNELS.map(c => ({ id: c.id, name: c.name, shortName: c.shortName }));
+            return CHANNELS.map(c => ({
+                id: c.id,
+                name: c.name,
+                shortName: c.shortName,
+                scheduleDays: Object.keys(c.schedule).length
+            }));
+        },
+
+        getAdLibrary() {
+            return JSON.parse(JSON.stringify(AD_LIBRARY));
         },
 
         getCurrentState() {
@@ -906,11 +1070,13 @@
                 channel: CHANNELS[currentChannelIndex],
                 program: getCurrentProgram(CHANNELS[currentChannelIndex]),
                 time: getNow(),
-                simulated: simulatedTime !== null
+                simulated: simulatedTime !== null,
+                adPlaying: currentAdPlaying,
             };
         },
 
         on(event, callback) {
+            if (typeof callback !== 'function') return;
             if (!_retroListeners[event]) _retroListeners[event] = [];
             _retroListeners[event].push(callback);
         },
@@ -982,12 +1148,13 @@
     };
 
     const AD_CONFIG = {
-        defaultDuration: 10,
+        defaultDuration: 15,
         historySize: 5,
     };
 
     let adPlayHistory = [];
     let currentAdPlaying = null;
+    let adDurationTimer = null;
 
     function getTimePeriod(now) {
         const h = now.getHours();
@@ -1017,6 +1184,43 @@
         currentAdPlaying = selected;
         window.RetroTV._emit('adPlay', { ad: selected, period });
         return selected;
+    }
+
+    function clearAdTimer() {
+        if (adDurationTimer) {
+            clearTimeout(adDurationTimer);
+            adDurationTimer = null;
+        }
+    }
+
+    function startAdTimer(ad) {
+        clearAdTimer();
+        const duration = (ad.duration || AD_CONFIG.defaultDuration) * 1000;
+        adDurationTimer = setTimeout(() => {
+            adDurationTimer = null;
+            if (!currentAdPlaying) return;
+            const channel = CHANNELS[currentChannelIndex];
+            const currentProg = getCurrentProgram(channel);
+            const progKey = `${currentChannelIndex}:${currentProg.index}`;
+
+            if (progKey === currentProgramKey && currentProg.isAd) {
+                const nextAd = selectAdForSlot();
+                if (nextAd) {
+                    videoEl.src = nextAd.url;
+                    videoEl.load();
+                    videoEl.play().catch(() => {});
+                    adBadge.textContent = `广告 · ${nextAd.title}`;
+                    startAdTimer(nextAd);
+                } else {
+                    videoEl.currentTime = 0;
+                    videoEl.play().catch(() => {});
+                    startAdTimer({ duration: AD_CONFIG.defaultDuration });
+                }
+            } else {
+                currentAdPlaying = null;
+                adBadge.classList.remove('visible');
+            }
+        }, duration);
     }
 
     // ============================================================
@@ -1503,25 +1707,31 @@
     // ============================================================
     // 频道预加载
     // ============================================================
-    const preloadPool = new Map();
+    const preloadPool = new Map(); // channelIndex -> { el: HTMLVideoElement, url: string }
 
     function updatePreloadPool() {
         const total = CHANNELS.length;
+        if (total < 2) return;
         const prevIdx = (currentChannelIndex - 1 + total) % total;
         const nextIdx = (currentChannelIndex + 1) % total;
         const needed = new Set([prevIdx, nextIdx]);
 
-        preloadPool.forEach((el, idx) => {
+        // 清理不再需要的预加载元素
+        preloadPool.forEach((entry, idx) => {
             if (!needed.has(idx)) {
-                el.src = '';
-                el.load();
+                entry.el.pause();
+                entry.el.removeAttribute('src');
+                entry.el.load();
+                entry.el.remove();
                 preloadPool.delete(idx);
             }
         });
 
+        // 为相邻频道创建或更新预加载
         needed.forEach(idx => {
             if (idx === currentChannelIndex) return;
             const ch = CHANNELS[idx];
+            if (!ch) return;
             const prog = getCurrentProgram(ch);
             let url;
             if (prog.isAd) {
@@ -1533,27 +1743,48 @@
             }
             if (!url) return;
 
-            let el = preloadPool.get(idx);
-            if (!el) {
-                el = document.createElement('video');
+            let entry = preloadPool.get(idx);
+            if (!entry) {
+                const el = document.createElement('video');
                 el.muted = true;
                 el.preload = 'auto';
-                el.style.display = 'none';
+                el.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
                 document.body.appendChild(el);
-                preloadPool.set(idx, el);
+                entry = { el, url: '' };
+                preloadPool.set(idx, entry);
             }
-            if (el.getAttribute('data-url') !== url) {
-                el.src = url;
-                el.setAttribute('data-url', url);
-                el.load();
+            if (entry.url !== url) {
+                entry.el.src = url;
+                entry.url = url;
+                entry.el.load();
             }
         });
     }
 
+    function getPreloadedUrl(channelIndex) {
+        const entry = preloadPool.get(channelIndex);
+        if (!entry) return null;
+        // 检查是否已缓冲足够数据
+        if (entry.el.readyState >= 3) {
+            return entry.url;
+        }
+        return entry.url; // 即使未完全缓冲，浏览器缓存也能加速
+    }
+
+    function consumePreload(channelIndex) {
+        const entry = preloadPool.get(channelIndex);
+        if (!entry) return null;
+        const url = entry.url;
+        // 停止预加载元素，保留在池中待 updatePreloadPool 清理
+        entry.el.pause();
+        return url;
+    }
+
     // ============================================================
-    // 视频播放（集成广告引擎）
+    // 视频播放（集成广告引擎 + 时长控制）
     // ============================================================
     function playVideoForProgram(program) {
+        clearAdTimer();
         let url;
 
         if (program.isAd) {
@@ -1562,6 +1793,7 @@
                 url = ad.url;
                 adBadge.textContent = `广告 · ${ad.title}`;
                 adBadge.classList.add('visible');
+                startAdTimer(ad);
             } else {
                 url = VIDEO_SOURCES[program.id];
                 adBadge.textContent = '广告';
@@ -1598,18 +1830,28 @@
         const progKey = `${currentChannelIndex}:${currentProg.index}`;
 
         if (progKey === currentProgramKey) {
-            if (currentProg.isAd) {
+            if (currentProg.isAd && adDurationTimer) {
+                // 视频比广告配置时长短，循环播放直到 timer 触发切换
+                videoEl.currentTime = 0;
+                videoEl.play().catch(() => {});
+            } else if (currentProg.isAd) {
+                // 没有 timer（异常兜底），选下一条广告
                 const ad = selectAdForSlot();
                 if (ad) {
                     videoEl.src = ad.url;
                     videoEl.load();
                     videoEl.play().catch(() => {});
                     adBadge.textContent = `广告 · ${ad.title}`;
+                    startAdTimer(ad);
                     return;
                 }
+                videoEl.currentTime = 0;
+                videoEl.play().catch(() => {});
+            } else {
+                // 普通节目循环
+                videoEl.currentTime = 0;
+                videoEl.play().catch(() => {});
             }
-            videoEl.currentTime = 0;
-            videoEl.play().catch(() => {});
         } else {
             advanceToProgram(currentProg);
         }
@@ -1628,6 +1870,50 @@
     // ============================================================
     // 频道切换（集成预加载+台标）
     // ============================================================
+    function playVideoWithPreload(program, channelIdx) {
+        clearAdTimer();
+        let url;
+
+        if (program.isAd) {
+            const ad = selectAdForSlot();
+            if (ad) {
+                url = ad.url;
+                adBadge.textContent = `广告 · ${ad.title}`;
+                adBadge.classList.add('visible');
+                startAdTimer(ad);
+            } else {
+                url = VIDEO_SOURCES[program.id];
+                adBadge.textContent = '广告';
+                adBadge.classList.add('visible');
+            }
+        } else {
+            // 尝试使用预加载的资源
+            const preloadedUrl = consumePreload(channelIdx);
+            if (preloadedUrl) {
+                url = preloadedUrl;
+            } else {
+                url = VIDEO_SOURCES[program.id];
+            }
+            adBadge.classList.remove('visible');
+            currentAdPlaying = null;
+        }
+
+        if (!url) {
+            console.warn('No video URL for program:', program.id);
+            return;
+        }
+
+        if (videoEl.srcObject) {
+            videoEl.srcObject = null;
+        }
+
+        videoEl.src = url;
+        videoEl.load();
+        videoEl.play().catch(e => {
+            console.log('Autoplay blocked:', e.message);
+        });
+    }
+
     function switchChannel(newIndex, immediate = false) {
         if (isSwitching) return;
         if (newIndex < 0 || newIndex >= CHANNELS.length) return;
@@ -1643,7 +1929,7 @@
         if (immediate) {
             currentChannelIndex = newIndex;
             currentProgramKey = `${newIndex}:${program.index}`;
-            playVideoForProgram(program);
+            playVideoWithPreload(program, newIndex);
             updateUI();
             showChannelLogo(channel);
             isSwitching = false;
@@ -1657,12 +1943,12 @@
         screen.classList.add('flickering');
 
         const hasPreload = preloadPool.has(newIndex);
-        const delay = hasPreload ? 150 + Math.random() * 200 : 300 + Math.random() * 500;
+        const delay = hasPreload ? 120 + Math.random() * 150 : 300 + Math.random() * 500;
 
         setTimeout(() => {
             currentChannelIndex = newIndex;
             currentProgramKey = `${newIndex}:${program.index}`;
-            playVideoForProgram(program);
+            playVideoWithPreload(program, newIndex);
             hideStatic();
             screen.classList.remove('flickering');
             updateUI();
@@ -1676,7 +1962,7 @@
                 program: program
             });
 
-            setTimeout(updatePreloadPool, 500);
+            setTimeout(updatePreloadPool, 300);
         }, delay);
     }
 
@@ -2010,7 +2296,9 @@
                 switchChannel(currentChannelIndex + 1);
                 break;
             case '1': case '2': case '3': case '4':
-                switchChannel(parseInt(e.key) - 1);
+            case '5': case '6': case '7': case '8': case '9':
+                const chIdx = parseInt(e.key) - 1;
+                if (chIdx < CHANNELS.length) switchChannel(chIdx);
                 break;
             case ' ':
                 e.preventDefault();
